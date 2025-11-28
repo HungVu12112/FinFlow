@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">FinFlow</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name_app">FinFlow</string>
+    <string name="common_login">Login In</string>
+    <string name="common_sign">Sign Up</string>
+    <string name="forgot_password">Forgot Password ?</string>
+    <string name="login_detailed_information">AI-powered planning for real productivity.</string>
+    <string name="btn_login_with_google">Continue with Google</string>
+    <string name="continue_using_the_app_without_login">Continue using the app without Login</string>
+    <string name="privacy_policy_and_terms_of_use">Privacy Policy and Terms of Use</string>
+    <string name="next">Next</string>
+    <string name="i_agree_to_the_privacy_policy_and_terms_of_use">I agree to the Privacy Policy and Terms of Use</string>
+    <string name="default_web_client_id" translatable="false">578016070674-m6f4drdqqufp1p9ntkc450qcdd3u803t.apps.googleusercontent.com</string>
+    <string name="type_expense">Chi tiêu</string>
+    <string name="type_income">Thu nhập</string>
+    <string name="type_transfer">Chuyển khoản</string>
+</resources>

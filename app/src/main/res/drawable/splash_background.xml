@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:drawable="@drawable/img_splash"
+        android:gravity="fill" />
+
+    <item
+        android:bottom="60dp"
+        android:drawable="@drawable/icon_app"
+        android:gravity="center"
+        tools:ignore="UnusedAttribute" />
+
+</layer-list>
