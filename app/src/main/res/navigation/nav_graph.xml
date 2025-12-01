@@ -23,7 +23,14 @@
         android:id="@+id/goalsFragment"
         android:name="com.devux.finflow.main.view.goals.GoalsFragment"
         android:label="fragment_goals"
-        tools:layout="@layout/fragment_goals" />
+        tools:layout="@layout/fragment_goals" >
+        <action
+            android:id="@+id/action_goalsFragment_to_addGoalFragment"
+            app:destination="@id/addGoalFragment" />
+        <action
+            android:id="@+id/action_goalsFragment_to_goalDetailFragment"
+            app:destination="@id/goalDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileSettingsFragment"
         android:name="com.devux.finflow.main.view.profile.ProfileSettingsFragment"
@@ -43,4 +50,16 @@
         android:name="com.devux.finflow.main.view.category.CategoryManagementFragment"
         android:label="fragment_category_management"
         tools:layout="@layout/fragment_category_management" />
+    <fragment
+        android:id="@+id/addGoalFragment"
+        android:name="com.devux.finflow.main.view.goals.add_goal.AddGoalFragment"
+        android:label="AddGoalFragment" />
+    <fragment
+        android:id="@+id/goalDetailFragment"
+        android:name="com.devux.finflow.main.view.goals.detail.GoalDetailFragment"
+        android:label="GoalDetailFragment">
+        <argument
+            android:name="goal"
+            app:argType="com.devux.finflow.data.entity.GoalEntity" />
+    </fragment>
 </navigation>

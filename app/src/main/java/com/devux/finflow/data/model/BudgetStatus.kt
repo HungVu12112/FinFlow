@@ -1,6 +1,6 @@
 package com.devux.finflow.data.model
 
-data class BudgetStatus(
+data class  BudgetStatus(
     val categoryId: Long,
     val categoryName: String, // Tên danh mục (lấy từ bảng Category)
     val categoryIcon: String, // Icon danh mục

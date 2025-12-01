@@ -8,16 +8,18 @@ import androidx.room.TypeConverters
 import com.devux.finflow.core.converter.LocalDateConverter
 import com.devux.finflow.core.dao.BudgetDao
 import com.devux.finflow.core.dao.CategoryDao
+import com.devux.finflow.core.dao.GoalDao
 import com.devux.finflow.core.dao.TransactionDao
 import com.devux.finflow.core.dao.UserDao
 import com.devux.finflow.data.AccountEntity
 import com.devux.finflow.data.BudgetEntity
 import com.devux.finflow.data.CategoryEntity
+import com.devux.finflow.data.GoalEntity
 import com.devux.finflow.data.TransactionEntity
 import com.devux.finflow.utils.TABLE_NAME
 
 @Database(
-    entities = [TransactionEntity::class, CategoryEntity::class, BudgetEntity::class, AccountEntity::class],
+    entities = [TransactionEntity::class, CategoryEntity::class, BudgetEntity::class, AccountEntity::class, GoalEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -28,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun budgetDao(): BudgetDao
     abstract fun userDao(): UserDao
+    abstract fun goalDao(): GoalDao
 
     companion object {
         private var instance: AppDatabase? = null

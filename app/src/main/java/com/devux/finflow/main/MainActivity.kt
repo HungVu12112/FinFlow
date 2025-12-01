@@ -33,7 +33,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         binding.bottomNavigation.setupWithNavController(navHostFragment.navController)
         navHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id){
-                R.id.addTransactionFragment,R.id.categoryManagementFragment
+                R.id.addTransactionFragment,R.id.categoryManagementFragment,R.id.addGoalFragment
                     -> changeVisibleBottomNavigation(false)
                 else -> changeVisibleBottomNavigation(true)
             }

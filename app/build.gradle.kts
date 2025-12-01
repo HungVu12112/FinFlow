@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -48,6 +49,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.glance)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,6 +59,8 @@ dependencies {
     ///Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.hilt.navigation.fragment)
+
     ////room data
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
@@ -78,5 +82,4 @@ dependencies {
     implementation(libs.hilt.android)
 
     kapt(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.fragment)
 }
