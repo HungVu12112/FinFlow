@@ -1,5 +1,6 @@
 package com.devux.finflow.main.view.goals
 
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,11 +24,7 @@ class GoalsFragment : BaseFragment<FragmentGoalsBinding>(FragmentGoalsBinding::i
     override fun setAction() {
         // Nút thêm mới mục tiêu
         binding.fabAddGoal.setOnClickListener {
-            goalAdapter = GoalAdapter { goal ->
-                // Chuyển sang màn hình chi tiết, truyền object goal
-                val action = GoalsFragmentDirections.actionGoalsFragmentToGoalDetailFragment(goal)
-                findNavController().navigate(action)
-            }
+            findNavController().navigate(R.id.action_goalsFragment_to_addGoalFragment)
         }
     }
 
@@ -48,7 +45,9 @@ class GoalsFragment : BaseFragment<FragmentGoalsBinding>(FragmentGoalsBinding::i
 
     private fun setupRecyclerView() {
         goalAdapter = GoalAdapter { goal ->
-            findNavController().navigate(R.id.action_goalsFragment_to_goalDetailFragment)
+            // Chuyển sang màn hình chi tiết, truyền object goal
+            val action = GoalsFragmentDirections.actionGoalsFragmentToGoalDetailFragment(goal)
+            findNavController().navigate(action)
         }
 
         binding.rvGoals.apply {

@@ -15,11 +15,12 @@ import com.devux.finflow.data.AccountEntity
 import com.devux.finflow.data.BudgetEntity
 import com.devux.finflow.data.CategoryEntity
 import com.devux.finflow.data.GoalEntity
+import com.devux.finflow.data.GoalTransactionEntity
 import com.devux.finflow.data.TransactionEntity
 import com.devux.finflow.utils.TABLE_NAME
 
 @Database(
-    entities = [TransactionEntity::class, CategoryEntity::class, BudgetEntity::class, AccountEntity::class, GoalEntity::class],
+    entities = [TransactionEntity::class, CategoryEntity::class, BudgetEntity::class, AccountEntity::class, GoalEntity::class, GoalTransactionEntity::class],
     version = 1,
     exportSchema = false
 )
