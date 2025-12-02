@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.devux.finflow.R
 import com.devux.finflow.base.BaseFragment
 import com.devux.finflow.data.GoalEntity
@@ -31,6 +32,7 @@ class GoalDetailFragment :
     private val args: GoalDetailFragmentArgs by navArgs()
 
     private var currentGoal: GoalEntity? = null
+    private val historyAdapter = GoalHistoryAdapter()
 
     override fun initView() {
         // Nếu bạn truyền object GoalEntity
@@ -40,6 +42,11 @@ class GoalDetailFragment :
         }
         // Nếu bạn truyền ID (khuyên dùng ID để load dữ liệu mới nhất từ DB)
         // viewModel.loadGoal(args.goalId)
+        binding.rvHistory.apply {
+            adapter = historyAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            isNestedScrollingEnabled = false // Để cuộn mượt trong ScrollView
+        }
     }
 
     override fun setAction() {
@@ -66,13 +73,11 @@ class GoalDetailFragment :
         }
 
         binding.btnDeposit.setOnClickListener {
-            // Bước tiếp theo: Hiện Dialog nạp tiền
-            Toast.makeText(requireContext(), "Tính năng Nạp tiền (Bước 2)", Toast.LENGTH_SHORT)
-                .show()
+            showAdjustAmountDialog(isDeposit = true)
         }
 
         binding.btnWithdraw.setOnClickListener {
-            Toast.makeText(requireContext(), "Tính năng Rút tiền", Toast.LENGTH_SHORT).show()
+            showAdjustAmountDialog(isDeposit = false)
         }
     }
 
@@ -81,6 +86,9 @@ class GoalDetailFragment :
         viewModel.goal.observe(viewLifecycleOwner) { goal ->
             currentGoal = goal
             bindData(goal)
+        }
+        viewModel.history.observe(viewLifecycleOwner) { list ->
+            historyAdapter.submitList(list)
         }
     }
 
