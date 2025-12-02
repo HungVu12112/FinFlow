@@ -21,17 +21,30 @@ class GoalDetailViewModel @Inject constructor(
 
     private val _goal = MutableLiveData<GoalEntity>()
     val goal: LiveData<GoalEntity> = _goal
+    private val _history = MutableLiveData<List<GoalTransactionEntity>>()
+    val history: LiveData<List<GoalTransactionEntity>> = _history
 
     fun loadGoal(goalId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val goalEntity = goalRepository.getGoalById(goalId)
-            goalEntity?.let { _goal.postValue(it) }
+            goalEntity?.let {
+                _goal.postValue(it)
+                // Sau khi load Goal xong thì load luôn lịch sử của nó
+                loadHistory(it.id)
+            }
         }
     }
 
     fun deleteGoal(goal: GoalEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             goalRepository.deleteGoal(goal)
+        }
+    }
+    private fun loadHistory(goalId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalRepository.getGoalHistory(goalId).collect { list ->
+                _history.postValue(list)
+            }
         }
     }
 
@@ -75,7 +88,7 @@ class GoalDetailViewModel @Inject constructor(
             goalRepository.addGoalTransaction(transaction)
 
             // 4. Cập nhật lại LiveData để UI tự động đổi (Optional vì Room Flow tự làm rồi)
-            // _goal.postValue(updatedGoal)
+             _goal.postValue(updatedGoal)
         }
     }
 }

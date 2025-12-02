@@ -198,6 +198,15 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:paddingBottom="16dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_goal_history" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
