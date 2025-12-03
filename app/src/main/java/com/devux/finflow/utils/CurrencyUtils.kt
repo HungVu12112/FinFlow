@@ -17,4 +17,12 @@ object CurrencyUtils {
 
         return decimalFormat.format(amount)
     }
+    fun formatCurrencyNoSymbol(amount: Double): String {
+        val symbols = DecimalFormatSymbols(Locale.US)
+        symbols.groupingSeparator = '.' // Dùng dấu chấm phân cách hàng nghìn
+
+        // Pattern #:### (Số nguyên, không lấy phần thập phân nếu bằng 0)
+        val decimalFormat = DecimalFormat("#,###", symbols)
+        return decimalFormat.format(amount)
+    }
 }

@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_category_item"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp">
+    android:paddingVertical="12dp"
+    android:layout_marginBottom="@dimen/dimen_4">
 
     <ImageView
         android:id="@+id/imgTypeIcon"
@@ -54,12 +55,5 @@
         tools:text="+ 500.000 đ"
         tools:textColor="#4CAF50" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="#F0F0F0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tvType" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

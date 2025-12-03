@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devux.finflow.comon.TransactionResult
 import com.devux.finflow.data.GoalEntity
 import com.devux.finflow.data.GoalTransactionEntity
 import com.devux.finflow.data.repository.goal.GoalRepository
@@ -24,6 +25,12 @@ class GoalDetailViewModel @Inject constructor(
     private val _history = MutableLiveData<List<GoalTransactionEntity>>()
     val history: LiveData<List<GoalTransactionEntity>> = _history
 
+    fun setInitialGoal(goal: GoalEntity) {
+        _goal.value = goal
+        // Load lịch sử ngay khi có ID
+        loadHistory(goal.id)
+    }
+
     fun loadGoal(goalId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val goalEntity = goalRepository.getGoalById(goalId)
@@ -40,6 +47,7 @@ class GoalDetailViewModel @Inject constructor(
             goalRepository.deleteGoal(goal)
         }
     }
+
     private fun loadHistory(goalId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             goalRepository.getGoalHistory(goalId).collect { list ->
@@ -63,32 +71,55 @@ class GoalDetailViewModel @Inject constructor(
             "Mục tiêu đã quá hạn. Hãy cố gắng hoàn thành sớm nhé!"
         }
     }
-    fun adjustAmount(amount: Double, isDeposit: Boolean) {
-        val currentGoalValue = _goal.value ?: return
 
-        // 1. Tính toán số tiền mới
+    // Sửa lại hàm này trả về TransactionResult
+    fun validateAndAdjustAmount(amountStr: String, isDeposit: Boolean): TransactionResult {
+        // 1. Validate đầu vào (TC01, TC02)
+        if (amountStr.isEmpty()) return TransactionResult.EMPTY_INPUT
+
+        // Xóa dấu chấm và parse
+        val cleanAmount = amountStr.replace(".", "")
+        val amount = cleanAmount.toDoubleOrNull() ?: 0.02
+
+        if (amount <= 0) return TransactionResult.INVALID_AMOUNT
+
+        val currentGoalValue =
+            _goal.value ?: return TransactionResult.SUCCESS // Nên handle error ở đây nếu cần
+
+        // 2. Validate Logic nghiệp vụ (TC03)
+        if (!isDeposit && amount > currentGoalValue.currentAmount) {
+            return TransactionResult.INSUFFICIENT_FUNDS
+        }
+
+        // 3. Nếu mọi thứ OK -> Thực hiện tính toán và Lưu DB
+        executeTransaction(currentGoalValue, amount, isDeposit)
+        return TransactionResult.SUCCESS
+    }
+
+    private fun executeTransaction(currentGoal: GoalEntity, amount: Double, isDeposit: Boolean) {
         val newAmount = if (isDeposit) {
-            currentGoalValue.currentAmount + amount
+            currentGoal.currentAmount + amount
         } else {
-            val temp = currentGoalValue.currentAmount - amount
-            if (temp < 0) 0.0 else temp // Không cho âm tiền
+            currentGoal.currentAmount - amount
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            // 2. Cập nhật Goal chính
-            val updatedGoal = currentGoalValue.copy(currentAmount = newAmount)
+            // Update Goal
+            val updatedGoal = currentGoal.copy(currentAmount = newAmount)
             goalRepository.updateGoal(updatedGoal)
 
-            // 3. Ghi vào lịch sử
+            // Update History
             val transaction = GoalTransactionEntity(
-                goalId = currentGoalValue.id,
+                goalId = currentGoal.id,
                 amount = amount,
-                type = if (isDeposit) 1 else -1
+                type = if (isDeposit) 1 else -1,
+                date = System.currentTimeMillis()
             )
             goalRepository.addGoalTransaction(transaction)
 
-            // 4. Cập nhật lại LiveData để UI tự động đổi (Optional vì Room Flow tự làm rồi)
-             _goal.postValue(updatedGoal)
+            // Update UI
+            _goal.postValue(updatedGoal)
+            loadHistory(currentGoal.id)
         }
     }
 }

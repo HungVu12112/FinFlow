@@ -1,7 +1,7 @@
 package com.devux.finflow.main.view.goals.detail
 
 import android.graphics.Color
-import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
@@ -10,12 +10,12 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devux.finflow.R
 import com.devux.finflow.base.BaseFragment
+import com.devux.finflow.comon.TransactionResult
 import com.devux.finflow.data.GoalEntity
-import com.devux.finflow.databinding.DialogEnterAmountBinding
 import com.devux.finflow.databinding.FragmentGoalDetailBinding
 import com.devux.finflow.utils.CurrencyUtils
 import com.devux.finflow.utils.NumberTextWatcher
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -39,9 +39,10 @@ class GoalDetailFragment :
         if (args.goal != null) {
             currentGoal = args.goal
             bindData(currentGoal!!)
+            viewModel.setInitialGoal(args.goal!!)
         }
         // Nếu bạn truyền ID (khuyên dùng ID để load dữ liệu mới nhất từ DB)
-        // viewModel.loadGoal(args.goalId)
+        args.goal?.let { viewModel.loadGoal(it.id) }
         binding.rvHistory.apply {
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -57,9 +58,13 @@ class GoalDetailFragment :
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_edit -> {
-                    // Mở màn hình AddGoalFragment ở chế độ Edit
-                    // val action = GoalDetailFragmentDirections.actionToEdit(currentGoal)
-                    // findNavController().navigate(action)
+                    // Kiểm tra null để an toàn
+                    if (currentGoal != null) {
+                        // Truyền currentGoal sang màn hình Add để nó tự điền dữ liệu cũ vào
+                        val action = GoalDetailFragmentDirections
+                            .actionGoalDetailFragmentToAddGoalFragment(goal = currentGoal)
+                        findNavController().navigate(action)
+                    }
                     true
                 }
 
@@ -123,7 +128,7 @@ class GoalDetailFragment :
         binding.tvDeadline.text =
             "Hạn chót: ${dateFormat.format(deadlineDate)} (Còn $daysLeft ngày)"
 
-        // 4. Gợi ý
+        // 4. Gợi ýz
         binding.tvSuggestion.text = viewModel.getSmartSuggestion(goal)
     }
 
@@ -138,32 +143,60 @@ class GoalDetailFragment :
             .setNegativeButton("Hủy", null)
             .show()
     }
+
     private fun showAdjustAmountDialog(isDeposit: Boolean) {
         val title = if (isDeposit) "Nạp thêm tiền" else "Rút bớt tiền"
         val positiveBtn = if (isDeposit) "Nạp tiền" else "Rút tiền"
 
-        // Inflate layout cho Dialog
-        val dialogBinding = DialogEnterAmountBinding.inflate(LayoutInflater.from(requireContext()))
+        val dialogView = layoutInflater.inflate(R.layout.dialog_enter_amount, null)
+        val etAmount = dialogView.findViewById<EditText>(R.id.etAmount)
+        val tilAmount =
+            dialogView.findViewById<TextInputLayout>(R.id.tilAmount) // Cần ID của TextInputLayout trong XML
 
-        // Format tiền khi nhập
-        dialogBinding.etAmount.addTextChangedListener(NumberTextWatcher(dialogBinding.etAmount))
+        etAmount.addTextChangedListener(NumberTextWatcher(etAmount))
 
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        // Tạo dialog nhưng chưa show ngay để override nút Positive
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle(title)
-            .setView(dialogBinding.root)
+            .setView(dialogView)
+            .setPositiveButton(positiveBtn, null) // Set null ở đây để override bên dưới
             .setNegativeButton("Hủy", null)
-            .setPositiveButton(positiveBtn) { _, _ ->
-                // Xử lý khi bấm nút Xác nhận
-                val amountStr = dialogBinding.etAmount.text.toString().replace(".", "")
-                val amount = amountStr.toDoubleOrNull() ?: 0.0
-
-                if (amount > 0) {
-                    viewModel.adjustAmount(amount, isDeposit)
-                    Toast.makeText(requireContext(), "Thành công!", Toast.LENGTH_SHORT).show()
-                }
-            }
             .create()
 
         dialog.show()
+
+        // Override nút Positive để ngăn Dialog đóng nếu có lỗi
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val amountStr = etAmount.text.toString()
+
+            // Gọi ViewModel kiểm tra
+            val result = viewModel.validateAndAdjustAmount(amountStr, isDeposit)
+
+            when (result) {
+                TransactionResult.SUCCESS -> {
+                    Toast.makeText(requireContext(), "Giao dịch thành công!", Toast.LENGTH_SHORT)
+                        .show()
+                    dialog.dismiss() // Chỉ đóng khi thành công
+                }
+
+                TransactionResult.EMPTY_INPUT -> {
+                    tilAmount.error = "Vui lòng nhập số tiền"
+                }
+
+                TransactionResult.INVALID_AMOUNT -> {
+                    tilAmount.error = "Số tiền phải lớn hơn 0"
+                }
+
+                TransactionResult.INSUFFICIENT_FUNDS -> {
+                    // Hiển thị lỗi rõ ràng
+                    Toast.makeText(
+                        requireContext(),
+                        "Số dư hiện tại không đủ để rút!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    tilAmount.error = "Vượt quá số dư"
+                }
+            }
+        }
     }
 }
