@@ -9,12 +9,14 @@ import com.devux.finflow.core.dao.GoalDao
 import com.devux.finflow.core.dao.TransactionDao
 import com.devux.finflow.core.dao.UserDao
 import com.devux.finflow.core.db.AppDatabase
-import com.devux.finflow.data.repository.category.CategoryRepositoryImpl
-import com.devux.finflow.data.repository.transaction.TransactionRepository
-import com.devux.finflow.data.repository.transaction.TransactionRepositoryImpl
+import com.devux.finflow.data.repository.budget.BudgetRepository
+import com.devux.finflow.data.repository.budget.BudgetRepositoryImpl
 import com.devux.finflow.data.repository.category.CategoryRepository
+import com.devux.finflow.data.repository.category.CategoryRepositoryImpl
 import com.devux.finflow.data.repository.goal.GoalRepository
 import com.devux.finflow.data.repository.goal.GoalRepositoryImpl
+import com.devux.finflow.data.repository.transaction.TransactionRepository
+import com.devux.finflow.data.repository.transaction.TransactionRepositoryImpl
 import com.devux.finflow.helper.PreferencesHelper
 import com.devux.finflow.utils.TABLE_NAME
 import dagger.Module
@@ -76,6 +78,12 @@ object DatabaseModule {
     fun provideGoalRepository(
         goalDao: GoalDao
     ): GoalRepository = GoalRepositoryImpl(goalDao)
+
+    @Provides
+    @Singleton
+    fun provideBudgetRepository(
+        budgetDao: BudgetDao
+    ): BudgetRepository = BudgetRepositoryImpl(budgetDao)
 
     @Provides
     @Singleton

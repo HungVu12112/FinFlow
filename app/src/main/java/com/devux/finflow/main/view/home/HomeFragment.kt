@@ -7,13 +7,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devux.finflow.R
 import com.devux.finflow.base.BaseFragment
 import com.devux.finflow.databinding.FragmentHomeBinding
 import com.devux.finflow.helper.PreferencesHelper
+import com.devux.finflow.main.view.adapter.BudgetHomeAdapter
 import com.devux.finflow.utils.CurrencyUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
@@ -23,6 +26,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
     private lateinit var transactionAdapter: TransactionAdapter
+    private val budgetHomeAdapter = BudgetHomeAdapter()
     private val viewModel: HomeViewModel by viewModels()
 
     @Inject
@@ -49,7 +53,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     override fun setAction() {
-
+        binding.rvHomeBudget.apply {
+            adapter = budgetHomeAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            setHasFixedSize(true)
+        }
+        binding.btnSetupBudget.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_budgetFragment)
+        }
+        binding.tvEmptyBudget.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_budgetFragment)
+        }
     }
 
     override fun setObserve() {
@@ -60,6 +74,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel.allCategories.observe(this) { categories ->
             if (categories != null) {
                 transactionAdapter.setCategories(categories)
+            }
+        }
+        viewModel.homeBudgets.observe(viewLifecycleOwner) { list ->
+            binding.layoutBudgetWidget.visibility = View.VISIBLE
+
+            if (list.isNullOrEmpty()) {
+                binding.rvHomeBudget.visibility = View.GONE
+                binding.tvEmptyBudget.visibility = View.VISIBLE
+            } else {
+                binding.rvHomeBudget.visibility = View.VISIBLE
+                binding.tvEmptyBudget.visibility = View.GONE
+
+                budgetHomeAdapter.submitList(list)
             }
         }
 

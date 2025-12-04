@@ -2,6 +2,7 @@ package com.devux.finflow.data.repository.transaction
 
 import com.devux.finflow.data.TransactionEntity
 import com.devux.finflow.data.TransactionType
+import com.devux.finflow.data.model.CategoryExpenseTuple
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
@@ -19,4 +20,5 @@ interface TransactionRepository {
 
     //Lấy tổng tiền (Thu hoặc Chi) theo khoảng thời gian
     fun getTotalAmountByDateRange(type: TransactionType, startDate: Long, endDate: Long): Flow<Double?>
+    fun getMonthlyExpenses(startDate: Long, endDate: Long): Flow<List<CategoryExpenseTuple>>
 }

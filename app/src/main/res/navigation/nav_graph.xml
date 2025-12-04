@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_addTransactionFragment"
             app:destination="@id/addTransactionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_budgetFragment"
+            app:destination="@id/budgetFragment" />
     </fragment>
     <fragment
         android:id="@+id/analyticsFragment"
@@ -73,4 +76,8 @@
             android:id="@+id/action_goalDetailFragment_to_addGoalFragment"
             app:destination="@id/addGoalFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.devux.finflow.main.view.budget.BudgetFragment"
+        android:label="BudgetFragment" />
 </navigation>

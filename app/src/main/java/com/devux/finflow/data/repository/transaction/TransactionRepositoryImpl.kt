@@ -3,6 +3,7 @@ package com.devux.finflow.data.repository.transaction
 import com.devux.finflow.core.dao.TransactionDao
 import com.devux.finflow.data.TransactionEntity
 import com.devux.finflow.data.TransactionType
+import com.devux.finflow.data.model.CategoryExpenseTuple
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -58,5 +59,12 @@ class TransactionRepositoryImpl @Inject constructor(
         endDate: Long
     ): Flow<Double?> {
         return dao.getTotalAmountByDateRange(type, startDate, endDate)
+    }
+
+    override fun getMonthlyExpenses(
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<CategoryExpenseTuple>> {
+        return dao.getMonthlyExpenses(startDate, endDate)
     }
 }

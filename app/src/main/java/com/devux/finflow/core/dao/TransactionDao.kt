@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.devux.finflow.data.TransactionEntity
 import com.devux.finflow.data.TransactionType // <-- Quan trọng: Import Enum của bạn
+import com.devux.finflow.data.model.CategoryExpenseTuple
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -55,13 +56,18 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE accountId = :accountId OR toAccountId = :accountId ORDER BY date DESC")
     fun getTransactionsByAccountId(accountId: String): Flow<List<TransactionEntity>>
 
-    @Query("""
+    @Query(
+        """
         SELECT categoryId, SUM(amount) as total 
         FROM transactions 
         WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate 
         GROUP BY categoryId
-    """)
-    fun getMonthlyExpenseByCategory(startDate: Long, endDate: Long): Flow<List<CategoryExpenseTuple>>
+    """
+    )
+    fun getMonthlyExpenseByCategory(
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<CategoryExpenseTuple>>
 
     // 1. Lấy danh sách giao dịch trong khoảng thời gian
     @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
@@ -69,9 +75,20 @@ interface TransactionDao {
 
     // 2. Tính tổng thu/chi trong khoảng thời gian (để cập nhật Card Income/Outcome)
     @Query("SELECT SUM(amount) FROM transactions WHERE type = :type AND date BETWEEN :startDate AND :endDate")
-    fun getTotalAmountByDateRange(type: TransactionType, startDate: Long, endDate: Long): Flow<Double?>
+    fun getTotalAmountByDateRange(
+        type: TransactionType,
+        startDate: Long,
+        endDate: Long
+    ): Flow<Double?>
+
+    @Query(
+        """
+        SELECT categoryId, SUM(amount) as total 
+        FROM transactions 
+        WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate 
+        GROUP BY categoryId
+    """
+    )
+    fun getMonthlyExpenses(startDate: Long, endDate: Long): Flow<List<CategoryExpenseTuple>>
 }
-data class CategoryExpenseTuple(
-    val categoryId: Long,
-    val total: Double
-)
+
