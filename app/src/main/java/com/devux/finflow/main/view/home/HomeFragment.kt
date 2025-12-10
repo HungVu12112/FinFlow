@@ -34,8 +34,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestNotificationListenerPermission(requireContext())
-        requestPostNotificationPermission(requireActivity())
+//        requestNotificationListenerPermission(requireContext())
+//        requestPostNotificationPermission(requireActivity())
 
     }
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/dimen_0"
     android:fitsSystemWindows="true"
     tools:context=".main.MainActivity">
 
@@ -14,23 +14,28 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"
+        android:fitsSystemWindows="false"
+        android:padding="@dimen/dimen_0"
+        app:defaultNavHost="false"
         app:navGraph="@navigation/nav_graph" />
     <View
         android:id="@+id/bottom_background"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:background="?attr/android:colorBackground"/>
+        android:background="?attr/android:colorBackground" />
 
+    <!-- BottomAppBar -->
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:backgroundTint="?attr/colorSecondary"
+        android:fitsSystemWindows="false"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="8dp"
+        android:padding="@dimen/dimen_0"
         app:fabCradleRoundedCornerRadius="40dp"
         app:fabCradleVerticalOffset="8dp"
         app:hideOnScroll="false">
@@ -41,17 +46,20 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:elevation="0dp"
+            android:padding="@dimen/dimen_0"
+            android:fitsSystemWindows="false"
             app:menu="@menu/bottom_nav_menu" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 
+    <!-- FAB luôn nằm đúng cradle -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_add_24"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/purple_500"
         app:backgroundTint="@color/white"
-        app:shapeAppearanceOverlay="@style/FabShapeRound" />
+        app:layout_anchor="@id/bottomAppBar"
+        app:shapeAppearanceOverlay="@style/FabShapeRound"
+        app:tint="@color/purple_500" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

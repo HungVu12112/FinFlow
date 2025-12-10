@@ -1,10 +1,15 @@
 package com.devux.finflow.main
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.devux.finflow.R
@@ -13,6 +18,7 @@ import com.devux.finflow.data.CategoryEntity
 import com.devux.finflow.data.TransactionType
 import com.devux.finflow.databinding.ActivityMainBinding
 import com.devux.finflow.main.view.home.HomeViewModel
+import com.devux.finflow.utils.ReminderScheduler
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,9 +27,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var navHostFragment: NavHostFragment
 
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Nếu được cấp quyền -> Lên lịch ngay
+            ReminderScheduler.scheduleAllReminders(this)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkAndRequestNotificationPermission()
+
+        // Nếu Android < 13 thì không cần xin quyền runtime, cứ thế chạy
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            ReminderScheduler.scheduleAllReminders(this)
+        }
     }
 
     override fun initView() {
@@ -145,6 +164,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         // 4. Gọi ViewModel để chèn
         sampleCategories.forEach { category ->
             viewModel.insertCategory(category)
+        }
+    }
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                // Chưa có quyền -> Xin quyền
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                // Đã có quyền -> Lên lịch
+                ReminderScheduler.scheduleAllReminders(this)
+            }
+        }else {
+            // Android cũ
+            ReminderScheduler.scheduleAllReminders(this)
         }
     }
 }

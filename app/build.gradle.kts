@@ -82,4 +82,8 @@ dependencies {
     implementation(libs.hilt.android)
 
     kapt(libs.hilt.compiler)
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+    /// Chart Pie
+    implementation(libs.mpandroidchart)
 }
