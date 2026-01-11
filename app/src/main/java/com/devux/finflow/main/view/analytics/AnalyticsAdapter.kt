@@ -1,4 +1,4 @@
-package com.devux.finflow.main.view.adapter
+package com.devux.finflow.main.view.analytics
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -13,6 +13,12 @@ import com.devux.finflow.utils.CurrencyUtils
 
 class AnalyticsAdapter :
     ListAdapter<CategoryStatModel, AnalyticsAdapter.ViewHolder>(DiffCallback()) {
+    private var currentIconTint: Int = 0
+
+    fun setIconTintColor(color: Int) {
+        this.currentIconTint = color
+        notifyDataSetChanged() // Load lại toàn bộ list để áp dụng màu mới
+    }
 
     inner class ViewHolder(private val binding: ItemAnalyticsCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -51,6 +57,7 @@ class AnalyticsAdapter :
                 // Icon mặc định nếu không tìm thấy
                 binding.imgIcon.setImageResource(R.drawable.ic_launcher_foreground)
             }
+            binding.imgIcon.setColorFilter(currentIconTint)
         }
     }
 

@@ -34,8 +34,7 @@ class CategoryManageAdapter(
             } else {
                 binding.imgCategoryIcon.setImageResource(R.drawable.ic_launcher_foreground)
             }
-
-            binding.root.setOnClickListener {
+            binding.imgDragHandle.setOnClickListener {
                 onCategoryClick(item)
             }
             binding.imgCategoryIcon.setColorFilter(currentIconTint)

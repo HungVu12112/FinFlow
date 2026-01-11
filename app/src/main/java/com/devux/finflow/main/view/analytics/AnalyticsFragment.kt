@@ -1,12 +1,13 @@
 package com.devux.finflow.main.view.analytics
 
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.devux.finflow.R
 import com.devux.finflow.base.BaseFragment
 import com.devux.finflow.data.model.CategoryStatModel
 import com.devux.finflow.databinding.FragmentAnalyticsBinding
-import com.devux.finflow.main.view.adapter.AnalyticsAdapter
 import com.devux.finflow.utils.CurrencyUtils
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.PieData
@@ -75,7 +76,8 @@ class AnalyticsFragment :
 
             // 3. Cập nhật List
             adapter.submitList(state.expenseList)
-
+            val colorRed = ContextCompat.getColor(requireContext(), R.color.orange_900)
+            adapter.setIconTintColor(colorRed)
             // Text ở giữa biểu đồ
             binding.pieChart.centerText =
                 "Tổng Chi\n${CurrencyUtils.formatCurrency(state.totalExpense)}"

@@ -30,12 +30,10 @@ class CategoryManagementFragment : BaseFragment<FragmentCategoryManagementBindin
     }
 
     override fun setAction() {
-        // Nút Back
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Nút Thêm mới (+)
         binding.btnAddCategory.setOnClickListener {
             showAddCategoryBottomSheet()
         }
@@ -49,7 +47,6 @@ class CategoryManagementFragment : BaseFragment<FragmentCategoryManagementBindin
             }
         }
 
-        // Lắng nghe thông báo lỗi/thành công
         viewModel.eventMessage.observe(viewLifecycleOwner) { message ->
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
@@ -98,7 +95,6 @@ class CategoryManagementFragment : BaseFragment<FragmentCategoryManagementBindin
                     }
                 }
 
-                // Lọc lại danh sách
                 filterListByTab(currentTabPosition)
             }
 
@@ -134,8 +130,8 @@ class CategoryManagementFragment : BaseFragment<FragmentCategoryManagementBindin
         AlertDialog.Builder(requireContext()).setTitle("Tùy chọn: ${category.name}")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> showEditCategoryBottomSheet(category) // Gọi BottomSheet Sửa
-                    1 -> showDeleteConfirmDialog(category) // Gọi Dialog Xóa
+                    0 -> showEditCategoryBottomSheet(category)
+                    1 -> showDeleteConfirmDialog(category)
                 }
             }.show()
     }
